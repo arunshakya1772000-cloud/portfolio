@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dark text-white font-sans antialiased overflow-x-hidden;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@layer utilities {
+  .glass-effect {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-rose-700;
+  }
+  .cinematic-shadow {
+    box-shadow: 0 0 50px -10px rgba(220, 38, 38, 0.4);
+  }
+}
+
+body.no-scroll, html.no-scroll {
+  overflow: hidden !important;
+  height: 100% !important;
+}
