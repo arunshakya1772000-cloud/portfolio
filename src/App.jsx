@@ -8,6 +8,8 @@ import Footer from './components/Footer';
 import ProfileImage from './components/ProfileImage';
 import ImageView from './pages/ImageView';
 import VideoPlayer from './pages/VideoPlayer';
+import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 
 const AppContent = () => {
@@ -24,8 +26,23 @@ const AppContent = () => {
       <main className="flex-grow z-10 w-full">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/upload" element={<UploadForm />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/login" element={<Login />} />
+          <Route 
+            path="/upload" 
+            element={
+              <ProtectedRoute>
+                <UploadForm />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } 
+          />
           <Route path="/image/:id" element={<ImageView />} />
           <Route path="/video/:id" element={<VideoPlayer />} />
         </Routes>

@@ -55,6 +55,19 @@ mongoose.connect(uri, {
 
 // --- API ENDPOINTS ---
 
+// Admin Login
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body;
+  const adminUser = process.env.ADMIN_USERNAME || 'admin';
+  const adminPass = process.env.ADMIN_PASSWORD || 'password123';
+
+  if (username === adminUser && password === adminPass) {
+    res.json({ success: true, message: 'Logged in successfully', token: 'dummy-jwt-token' });
+  } else {
+    res.status(401).json({ success: false, message: 'Invalid credentials' });
+  }
+});
+
 // GET: Fetch all videos
 app.get('/api/videos', async (req, res) => {
   try {
