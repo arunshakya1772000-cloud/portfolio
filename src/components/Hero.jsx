@@ -43,8 +43,7 @@ const Hero = () => {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-4xl md:text-7xl lg:text-8xl font-heading font-extrabold uppercase mb-4 leading-none"
           >
-            PORTFOLIO
-
+            ARUN KUMAR
           </motion.h1>
 
           <motion.p 

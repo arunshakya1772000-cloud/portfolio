@@ -31,11 +31,19 @@ const ProfileImage = ({
   const fileInputRef = useRef(null);
   const cropImgRef   = useRef(null);
 
-  /* ── load saved profile on mount ── */
+  /* ── load saved profile on mount & listen for changes ── */
   useEffect(() => {
     const saved = localStorage.getItem('profileImage');
     if (saved) setProfileImage(saved);
-  }, []);
+
+    const handleStorage = (e) => {
+      if (e.key === 'profileImage') {
+        setProfileImage(e.newValue || defaultImage);
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, [defaultImage]);
 
   /* ── cleanup object URLs ── */
   useEffect(() => {
