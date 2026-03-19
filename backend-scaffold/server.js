@@ -3,7 +3,22 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+const fs = require('fs');
+const dotenv = require('dotenv');
+const result = dotenv.config({ path: path.resolve(__dirname, '.env') });
+if (result.error) {
+  console.error('Error loading .env file:', result.error);
+} else {
+  console.log('.env file loaded successfully');
+}
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+  console.log('Created uploads directory:', uploadsDir);
+}
+
 
 const app = express();
 app.use(cors());
@@ -12,9 +27,16 @@ app.use(express.json());
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
+
+
 // Storage configuration (Multer for Local, switch to multer-s3 for AWS S3 later)
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
+  destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage });
@@ -40,15 +62,28 @@ const Project = mongoose.model('Project', projectSchema);
 
 // MongoDB Connection
 const uri = process.env.MONGO_URI || 'mongodb+srv://arunshakya1772000_db_user:22UyZHc5dc4NB5Zw@cluster0.7lvocho.mongodb.net/';
+
+console.log('Connecting to MongoDB...');
 mongoose.connect(uri, {
+  family: 4, // Force IPv4
   serverApi: {
     version: '1',
     strict: true,
     deprecationErrors: true,
   }
 })
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.log(err));
+  .then(() => console.log('✅ MongoDB Connected'))
+  .catch(err => {
+    console.error('❌ MongoDB Connection Error:', err.message);
+    if (err.message.includes('ECONNREFUSED')) {
+      console.warn('TIP: This is often a DNS or network issue. Try checking your internet connection or switching to a different DNS (like 8.8.8.8).');
+    }
+  });
+
+// Handle connection events
+mongoose.connection.on('error', err => {
+  console.error('Mongoose error event:', err);
+});
 
 // --- API ENDPOINTS ---
 
@@ -59,9 +94,23 @@ app.get('/api/health', (req, res) => {
 
 // Admin Login
 app.post('/api/admin/login', (req, res) => {
-  const { username, password } = req.body;
+  let { username, password } = req.body;
+  
+  // Robustness: trim any leading/trailing whitespace
+  if (username) username = username.trim();
+  if (password) password = password.trim();
+
   const adminUser = process.env.ADMIN_USERNAME || 'bappandillo';
   const adminPass = process.env.ADMIN_PASSWORD || '58111279arun';
+
+  // Diagnostic logging (remove in production)
+  console.log('Login attempt:', { 
+    receivedUser: username, 
+    expectedUser: adminUser,
+    passMatch: password === adminPass,
+    receivedPassLen: password ? password.length : 0,
+    expectedPassLen: adminPass.length
+  });
 
   if (username === adminUser && password === adminPass) {
     res.json({ success: true, message: 'Logged in successfully', token: 'dummy-jwt-token' });
@@ -69,6 +118,7 @@ app.post('/api/admin/login', (req, res) => {
     res.status(401).json({ success: false, message: 'Invalid credentials' });
   }
 });
+
 
 // GET: Fetch all videos
 app.get('/api/videos', async (req, res) => {
@@ -109,11 +159,14 @@ app.post('/api/videos', upload.fields([
     });
 
     await newVideo.save();
+    console.log('Video saved successfully:', newVideo._id);
     res.status(201).json(newVideo);
   } catch (error) {
-    res.status(500).json({ error: 'Upload failed' });
+    console.error('Video upload error:', error);
+    res.status(500).json({ error: 'Upload failed: ' + error.message });
   }
 });
+
 
 // DELETE: Remove video
 app.delete('/api/videos/:id', async (req, res) => {
@@ -152,11 +205,24 @@ app.post('/api/projects', upload.single('image'), async (req, res) => {
     });
 
     await newProject.save();
+    console.log('Project saved successfully:', newProject._id);
     res.status(201).json(newProject);
   } catch (error) {
-    res.status(500).json({ error: 'Upload failed' });
+    console.error('Project upload error:', error);
+    res.status(500).json({ error: 'Upload failed: ' + error.message });
   }
 });
+
+// Global Error Handler (to ensure we always return JSON, not HTML)
+app.use((err, req, res, next) => {
+  console.error('Global error handler caught:', err);
+  res.status(err.status || 500).json({
+    success: false,
+    error: err.message || 'Internal Server Error',
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+});
+
 
 // DELETE: Remove project
 app.delete('/api/projects/:id', async (req, res) => {

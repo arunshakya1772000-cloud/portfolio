@@ -49,7 +49,6 @@ const UploadForm = () => {
     setErrorMsg('');
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || '';
       const formDataToSend = new FormData();
       formDataToSend.append('title', formData.title);
       formDataToSend.append('category', formData.category);
@@ -61,7 +60,7 @@ const UploadForm = () => {
           formDataToSend.append('image', thumbnailFile);
         }
         
-        response = await fetch(`${API_URL}/api/projects`, {
+        response = await fetch(`/api/projects`, {
           method: 'POST',
           body: formDataToSend,
         });
@@ -83,7 +82,7 @@ const UploadForm = () => {
           formDataToSend.append('thumbnail', thumbnailFile);
         }
         
-        response = await fetch(`${API_URL}/api/videos`, {
+        response = await fetch(`/api/videos`, {
           method: 'POST',
           body: formDataToSend,
         });
