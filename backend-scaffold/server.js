@@ -60,8 +60,8 @@ app.get('/api/health', (req, res) => {
 // Admin Login
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
-  const adminUser = process.env.ADMIN_USERNAME || 'admin';
-  const adminPass = process.env.ADMIN_PASSWORD || 'password123';
+  const adminUser = process.env.ADMIN_USERNAME || 'bappandillo';
+  const adminPass = process.env.ADMIN_PASSWORD || '58111279arun';
 
   if (username === adminUser && password === adminPass) {
     res.json({ success: true, message: 'Logged in successfully', token: 'dummy-jwt-token' });
