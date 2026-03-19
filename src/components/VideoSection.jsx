@@ -35,26 +35,7 @@ const defaultVideos = [
 const categories = ['All', 'Advertisement', 'Real Estate', 'Luxury Interior', 'Reels', 'Promotions', 'Photo Editing'];
 
 const VideoSection = () => {
-  const [videos, setVideos] = useState([]);
-
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const API_URL = import.meta.env.VITE_API_URL || '';
-        const res = await fetch(`${API_URL}/api/videos`);
-        let vids = [];
-        if (res.ok) vids = await res.json();
-        
-        const deletedVidDefaults = JSON.parse(localStorage.getItem('deletedDefaultVideos') || '[]');
-        setVideos([...vids, ...defaultVideos.filter(v => !deletedVidDefaults.includes(v.id))]);
-      } catch (err) {
-        console.error("Failed to fetch videos", err);
-        setVideos(defaultVideos);
-      }
-    };
-    fetchVideos();
-  }, []);
-  
+  const [videos, setVideos] = useState(defaultVideos);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();

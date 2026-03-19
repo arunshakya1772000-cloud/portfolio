@@ -47,26 +47,7 @@ const defaultProjects = [
 
 const GalleryGrid = () => {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState([]);
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const API_URL = import.meta.env.VITE_API_URL || '';
-        const res = await fetch(`${API_URL}/api/projects`);
-        let projs = [];
-        if (res.ok) projs = await res.json();
-        
-        const deletedProjDefaults = JSON.parse(localStorage.getItem('deletedDefaultProjects') || '[]');
-        setProjects([...projs, ...defaultProjects.filter(p => !deletedProjDefaults.includes(p.id))]);
-      } catch (err) {
-        console.error("Failed to fetch projects", err);
-        setProjects(defaultProjects);
-      }
-    };
-    fetchProjects();
-  }, []);
-
+  const [projects, setProjects] = useState(defaultProjects);
   const [activeCategory, setActiveCategory] = useState('All');
 
   const filteredProjects = activeCategory === 'All' 

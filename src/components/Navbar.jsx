@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, User, LogOut } from 'lucide-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-
-const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80";
+import { Menu, X } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 const navLinks = [
   { name: 'About', href: '#about' },
@@ -16,36 +14,7 @@ const navLinks = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-
-  // Load profile image and auth state from localStorage and listen for updates
-  useEffect(() => {
-    const loadState = () => {
-      const savedImage = localStorage.getItem('profileImage');
-      setProfileImage(savedImage || null);
-      setIsAdmin(localStorage.getItem('isAdmin') === 'true');
-    };
-    loadState();
-
-    // Listen for storage changes (e.g., after saving in Profile page)
-    const handleStorage = (e) => {
-      if (e.key === 'profileImage' || e.key === 'isAdmin') {
-        loadState();
-      }
-    };
-    window.addEventListener('storage', handleStorage);
-
-    // Poll every second to catch same-tab updates
-    const interval = setInterval(loadState, 1000);
-
-    return () => {
-      window.removeEventListener('storage', handleStorage);
-      clearInterval(interval);
-    };
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -65,13 +34,6 @@ const Navbar = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsOpen(false);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('isAdmin');
-    setIsAdmin(false);
-    navigate('/');
   };
 
   return (
@@ -114,44 +76,6 @@ const Navbar = () => {
               {link.name}
             </a>
           ))}
-
-
-          {/* Admin Profile/Login Button */}
-          {isAdmin ? (
-            <div className="flex items-center gap-4">
-              <Link 
-                to="/profile" 
-                className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/20 rounded-full hover:bg-white/10 transition-all group"
-              >
-                <div className="w-7 h-7 rounded-full overflow-hidden border-2 border-white/30 group-hover:border-primary transition-colors flex-shrink-0 bg-gray-800">
-                  {profileImage ? (
-                    <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <User size={14} className="text-gray-400" />
-                    </div>
-                  )}
-                </div>
-                <span className="text-xs font-semibold uppercase tracking-widest text-white/80 group-hover:text-white transition-colors pr-1">
-                  Arun Kumar
-                </span>
-              </Link>
-              <button 
-                onClick={handleLogout}
-                className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                title="Logout"
-              >
-                <LogOut size={18} />
-              </button>
-            </div>
-          ) : (
-            <Link 
-              to="/login" 
-              className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors"
-            >
-              Admin Login
-            </Link>
-          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -196,42 +120,6 @@ const Navbar = () => {
                   {link.name}
                 </a>
               ))}
-              {/* Mobile Admin Link */}
-              {isAdmin ? (
-                <>
-                  <Link 
-                    onClick={() => setIsOpen(false)} 
-                    to="/profile" 
-                    className="flex items-center gap-3 text-gray-300 hover:text-white uppercase tracking-wider text-sm"
-                  >
-                    <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-white/20 flex-shrink-0 bg-gray-800">
-                      {profileImage ? (
-                        <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <User size={14} className="text-gray-400" />
-                        </div>
-                      )}
-                    </div>
-                    <span>Arun Kumar</span>
-                  </Link>
-                  <button 
-                    onClick={() => { handleLogout(); setIsOpen(false); }}
-                    className="flex items-center gap-3 text-gray-400 hover:text-red-500 uppercase tracking-wider text-sm text-left pt-2"
-                  >
-                    <LogOut size={18} />
-                    <span>Logout</span>
-                  </button>
-                </>
-              ) : (
-                <Link 
-                  to="/login" 
-                  onClick={() => setIsOpen(false)}
-                  className="uppercase tracking-wider text-sm text-gray-400 hover:text-white pt-2"
-                >
-                  Admin Login
-                </Link>
-              )}
             </div>
           </motion.div>
         )}
