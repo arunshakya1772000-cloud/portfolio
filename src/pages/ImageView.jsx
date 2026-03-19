@@ -39,7 +39,7 @@ const ImageView = () => {
       // Fallback: try to find the project by ID from localStorage or default data
       const fetchProjectData = async () => {
         try {
-          const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+          const API_URL = import.meta.env.VITE_API_URL || '';
           const res = await fetch(`${API_URL}/api/projects`);
           let savedProjects = [];
           if (res.ok) savedProjects = await res.json();

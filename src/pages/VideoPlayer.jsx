@@ -35,7 +35,7 @@ const VideoPlayer = () => {
     } else {
       const fetchVideoData = async () => {
         try {
-          const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+          const API_URL = import.meta.env.VITE_API_URL || '';
           const res = await fetch(`${API_URL}/api/videos`);
           let savedVideos = [];
           if (res.ok) savedVideos = await res.json();

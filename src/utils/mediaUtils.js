@@ -1,7 +1,7 @@
 export const getMediaUrl = (path) => {
   if (!path) return '';
   if (path.startsWith('http') || path.startsWith('data:') || path.startsWith('blob:')) return path;
-  const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+  const API_URL = import.meta.env.VITE_API_URL || '';
   return `${API_URL}${path.startsWith('/') ? '' : '/'}${path}`;
 };
 

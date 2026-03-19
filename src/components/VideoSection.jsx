@@ -40,7 +40,7 @@ const VideoSection = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const API_URL = import.meta.env.VITE_API_URL || '';
         const res = await fetch(`${API_URL}/api/videos`);
         let vids = [];
         if (res.ok) vids = await res.json();

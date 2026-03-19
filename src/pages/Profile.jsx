@@ -52,7 +52,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchMedia = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const API_URL = import.meta.env.VITE_API_URL || '';
         
         // Fetch videos
         const vidRes = await fetch(`${API_URL}/api/videos`);
@@ -90,7 +90,7 @@ const Profile = () => {
       setVideos(prev => prev.filter(v => v.id !== id && v._id !== id));
     } else {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const API_URL = import.meta.env.VITE_API_URL || '';
         const res = await fetch(`${API_URL}/api/videos/${id}`, { method: 'DELETE' });
         if (res.ok) setVideos(prev => prev.filter(v => v._id !== id && v.id !== id));
       } catch (err) {
@@ -110,7 +110,7 @@ const Profile = () => {
       setProjects(prev => prev.filter(p => p.id !== id && p._id !== id));
     } else {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const API_URL = import.meta.env.VITE_API_URL || '';
         const res = await fetch(`${API_URL}/api/projects/${id}`, { method: 'DELETE' });
         if (res.ok) setProjects(prev => prev.filter(p => p._id !== id && p.id !== id));
       } catch (err) {
