@@ -37,7 +37,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('Connection failed. Please try again.');
+      setError(`Connection failed. Error: ${err.message}. API URL: ${API_URL || '(relative)'}`);
     } finally {
       setLoading(false);
     }

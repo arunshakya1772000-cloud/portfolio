@@ -1,12 +1,9 @@
-const dns = require('dns');
-dns.setServers(['8.8.8.8', '8.8.4.4']);
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 app.use(cors());
@@ -54,6 +51,11 @@ mongoose.connect(uri, {
   .catch(err => console.log(err));
 
 // --- API ENDPOINTS ---
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date(), env: process.env.NODE_ENV });
+});
 
 // Admin Login
 app.post('/api/admin/login', (req, res) => {
